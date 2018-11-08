@@ -6,8 +6,8 @@ class Job:
 		return self.kind
 def main():
 	print("Hello World!")
-	count = Job("count")
-	read = Job("read")
+	count = Job("Count")
+	read = Job("Read")
 	print(read.whatKind())
 
 if __name__ == '__main__':

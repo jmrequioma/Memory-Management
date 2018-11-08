@@ -3,26 +3,59 @@ class Job(object):
 		self.job_stream_num = job_stream_num
 		self.time = time
 		self.job_size = job_size
-	
-def readJobFile():
+
+class Block(object):
+	def __init__(self, num, size):
+		self.num = num
+		self.size = size
+
+def read_job_file():
 	with open("jobs.in", "r") as ins:
 		arr = []
 		jobs = []
 		for line in ins:
 			arr.append(line)
 			separated = line.split(';')
-			job = Job(separated[0], separated[1], separated[2])
+			job = Job(int(separated[0]), int(separated[1]), int(separated[2]))
 			jobs.append(job)
 
 	return jobs
 
+def read_memory_file():
+	with open("memory.in", "r") as ins:
+		arr = []
+		memorys = []
+		for line in ins:
+			arr.append(line)
+			separated = line.split(';')
+			block = Block(int(separated[0]), int(separated[1]))
+			memorys.append(block)
 
+	return memorys
+
+def first_fit(jobs, memorys):
+	print("First Fit Placement")
+	print("------------------------------------")
+	accumulated_time = 0
+	for memory in memorys:
+		for job in jobs:
+			if (job.job_size <= memory.size):
+				accumulated_time += job.time
+				print ("Job " + str(job.job_stream_num) + " allocated in Partition #" + str(memory.num))
+				jobs.remove(job)
+				break
+	print("Jobs are processed in " + str(accumulated_time) + " ms.")
+	print("------------------------------------")
 
 def main():
 	print("Hello World!")
-	jobs = readJobFile()
+	jobs = read_job_file()
+	memorys = read_memory_file()
 	for job in jobs:
-		print(job.job_stream_num)
+		print(job.job_stream_num, job.time, job.job_size)
+	for memory in memorys:
+		print(memory.num, memory.size)
+	first_fit(jobs, memorys)
 
 if __name__ == '__main__':
 	main()

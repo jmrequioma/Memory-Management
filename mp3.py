@@ -37,13 +37,27 @@ def first_fit(jobs, memorys):
 	print("First Fit Placement")
 	print("------------------------------------")
 	accumulated_time = 0
+	job_completed_count = 0
+	no_more_avlble = False
+	i = 0
 	for memory in memorys:
+		if (no_more_avlble):
+			break
 		for job in jobs:
 			if (job.job_size <= memory.size):
 				accumulated_time += job.time
+				job_completed_count += 1
 				print ("Job " + str(job.job_stream_num) + " allocated in Partition #" + str(memory.num))
 				jobs.remove(job)
+				# i += 1
+				# if (i == (len(memorys) - 1)):
+				# 	i = 0
 				break
+			# if (len(jobs) == 1 and jobs[0].size > memorys[i].size):
+			# 	print("no more!")
+			# 	no_more_avlble = True
+			# 	break
+
 	print("Jobs are processed in " + str(accumulated_time) + " ms.")
 	print("------------------------------------")
 

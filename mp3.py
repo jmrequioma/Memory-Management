@@ -40,21 +40,25 @@ def first_fit(jobs, memorys):
 	accumulated_time = 0
 	job_completed_count = 0
 	no_more_avlble = False
-	for i in range(len(memorys)):
-		for job in jobs:
-			if (job.job_size <= memorys[i].size):
-				accumulated_time += job.time
-				job_completed_count += 1
-				print ("Job " + str(job.job_stream_num) + " allocated in Partition #" + str(memorys[i].num))
-				memorys[i].assigned_job = job   # put job in block
-				jobs.remove(job)
-				break
-			# print("i value: " + str(i))
-		if (i == len(memorys) - 1):   # if all partitions are occupied, check again for available
-			# decrement by 1 ms all jobs in memorys
-			for memory in memorys:
-				memory.assigned_job.time -= 1
-			i = 0
+	while (true):
+		for memory in memorys:
+			if memory.
+	# for i in range(len(memorys)):
+	# 	for job in jobs:
+	# 		if (job.job_size <= memorys[i].size):
+	# 			accumulated_time += job.time
+	# 			job_completed_count += 1
+	# 			print ("Job " + str(job.job_stream_num) + " allocated in Partition #" + str(memorys[i].num))
+	# 			memorys[i].assigned_job = job   # put job in block
+	# 			jobs.remove(job)
+
+	# 			break
+	# 		# print("i value: " + str(i))
+	# 	if (i == len(memorys) - 1):   # if all partitions are occupied, check again for available
+	# 		# decrement by 1 ms all jobs in memorys
+	# 		for memory in memorys:
+	# 			memory.assigned_job.time -= 1
+	# 		i = 0
 
 	print("Jobs are processed in " + str(accumulated_time) + " ms.")
 	print("------------------------------------")

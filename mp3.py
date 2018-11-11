@@ -67,7 +67,9 @@ def first_fit(jobs, blocks):
 
 		# decrement 1 ms
 		for block in blocks:
-			block.assigned_job.time -= 1
+			if (block.assigned_job.time > 0):
+				print(block.num, block.assigned_job.time)
+				block.assigned_job.time -= 1
 			accumulated_time += 1
 		# print("len of jobs: " + str(len(jobs)))
 		# print(blocks_are_free(blocks))
@@ -76,13 +78,16 @@ def first_fit(jobs, blocks):
 				break
 		else:
 			# check if there are blocks big enough for the jobs
+			print("len: " + str(len(jobs)))
 			if (not (check_blocks_can_fit(jobs, blocks))):
-				# print("hi")
+				print("hi")
 				break
 
 	# set to None
 	for block in blocks:
+		block.assigned_job.time = 0
 		block.assigned_job = None
+
 
 	print("\nJobs are processed in " + str(accumulated_time) + " ms.")
 	print("Jobs completed: " + str(job_completed_count))
@@ -109,8 +114,7 @@ def best_fit(jobs, blocks):
 					if (job.job_size <= block.size):
 						unused_partition = block.size - job.job_size
 						unused_partitions.append(unused_partition)
-				for job in jobs:
-					
+
 			else:
 				print("something")
 
@@ -153,7 +157,9 @@ def main():
 	first_fit(jobs_copy, blocks_copy)
 	jobs_copy2 = copy.copy(jobs)
 	blocks_copy2 = copy.copy(blocks)
-	best_fit(jobs_copy2, blocks_copy2)
+	blocks_copy2.sort(key=lambda x: x.size)
+	first_fit(jobs_copy2, blocks_copy2)
+	# best_fit(jobs_copy2, blocks_copy2)
 
 if __name__ == '__main__':
 	main()

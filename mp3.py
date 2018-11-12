@@ -1,4 +1,3 @@
-import copy
 from copy import deepcopy
 
 class Job(object):
@@ -38,10 +37,9 @@ def read_block_file():
 	return blocks
 
 def first_fit(jobs, blocks):
-	print("First Fit Placement")
-	print("------------------------------------")
 	accumulated_time = 0
 	job_completed_count = 0
+	max_length = 0
 	while (True):
 		for block in blocks:
 			if (block.assigned_job is None):
@@ -64,13 +62,21 @@ def first_fit(jobs, blocks):
 							jobs.remove(job)
 							job_completed_count += 1
 							break
+		# display job queue
+		# print("Job Waiting Queue: ")
+		if (len(jobs) > max_length):
+			max_length = len(jobs)
+		# print("Waiting Queue Length: " + str(max_length))
+		# for job in jobs:
+		# 	print("Job " + str(job.job_stream_num))
 
 		# decrement 1 ms
 		for block in blocks:
-			if (block.assigned_job.time > 0):
-				print(block.num, block.assigned_job.time)
-				block.assigned_job.time -= 1
-			accumulated_time += 1
+			if (block.assigned_job is not None):
+				if (block.assigned_job.time > 0):
+					# print(block.num, block.assigned_job.time)
+					block.assigned_job.time -= 1
+				accumulated_time += 1
 		# print("len of jobs: " + str(len(jobs)))
 		# print(blocks_are_free(blocks))
 		if (len(jobs) == 0):
@@ -78,14 +84,13 @@ def first_fit(jobs, blocks):
 				break
 		else:
 			# check if there are blocks big enough for the jobs
-			print("len: " + str(len(jobs)))
+			# print("len: " + str(len(jobs)))
 			if (not (check_blocks_can_fit(jobs, blocks))):
-				print("hi")
+				# print("hi")
 				break
 
 	# set to None
 	for block in blocks:
-		block.assigned_job.time = 0
 		block.assigned_job = None
 
 
@@ -95,6 +100,7 @@ def first_fit(jobs, blocks):
 	for job in jobs:
 		print("Job " + str(job.job_stream_num))
 	print("Throughput: " + str(job_completed_count / float(accumulated_time)) + " ms.")
+	print("Max Waiting Queue Length: " + str(max_length))
 	print("------------------------------------")
 
 def best_fit(jobs, blocks):
@@ -148,17 +154,27 @@ def main():
 	print("Hello World!")
 	jobs = read_job_file()
 	blocks = read_block_file()
-	jobs_copy = copy.copy(jobs)
-	blocks_copy = copy.copy(blocks)
-	for job in jobs:
-		print(job.job_stream_num, job.time, job.job_size)
-	for block in blocks:
-		print(block.num, block.size)
+	jobs_copy = deepcopy(jobs)
+	blocks_copy = deepcopy(blocks)
+	# for job in jobs:
+	# 	print(job.job_stream_num, job.time, job.job_size)
+	# for block in blocks:
+	# 	print(block.num, block.size)
+	print("First Fit Placement")
+	print("------------------------------------")
 	first_fit(jobs_copy, blocks_copy)
-	jobs_copy2 = copy.copy(jobs)
-	blocks_copy2 = copy.copy(blocks)
+	jobs_copy2 = deepcopy(jobs)
+	blocks_copy2 = deepcopy(blocks)
 	blocks_copy2.sort(key=lambda x: x.size)
+	print("Best Fit Placement")
+	print("------------------------------------")
 	first_fit(jobs_copy2, blocks_copy2)
+	jobs_copy3 = deepcopy(jobs)
+	blocks_copy3 = deepcopy(blocks)
+	blocks_copy3.sort(key=lambda x: x.size, reverse=True)
+	print("Worst Fit Placement")
+	print("------------------------------------")
+	first_fit(jobs_copy3, blocks_copy3)
 	# best_fit(jobs_copy2, blocks_copy2)
 
 if __name__ == '__main__':

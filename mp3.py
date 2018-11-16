@@ -1,4 +1,5 @@
 from copy import deepcopy
+import numpy as np
 
 class Job(object):
 	def __init__(self, job_stream_num, time, job_size):
@@ -40,6 +41,7 @@ def first_fit(jobs, blocks):
 	accumulated_time = 0
 	job_completed_count = 0
 	max_length = 0
+	used = []
 	while (True):
 		for block in blocks:
 			if (block.assigned_job is None):
@@ -47,6 +49,7 @@ def first_fit(jobs, blocks):
 				for job in jobs:
 					if (job.job_size <= block.size):
 						block.assigned_job = job
+						used.append(((block.size - job.job_size) / block.size) * 100)
 						print ("Job " + str(job.job_stream_num) + " is allocated in Partition #" + str(block.num))
 						jobs.remove(job)
 						job_completed_count += 1
@@ -58,6 +61,7 @@ def first_fit(jobs, blocks):
 					for job in jobs:
 						if (job.job_size <= block.size):
 							block.assigned_job = job
+							used.append(((block.size - job.job_size) / block.size) * 100)
 							print ("Job " + str(job.job_stream_num) + " is allocated in Partition #" + str(block.num))
 							jobs.remove(job)
 							job_completed_count += 1
@@ -101,37 +105,8 @@ def first_fit(jobs, blocks):
 		print("Job " + str(job.job_stream_num))
 	print("Throughput: " + str(job_completed_count / float(accumulated_time)) + " ms.")
 	print("Max Waiting Queue Length: " + str(max_length))
-	print("------------------------------------")
-
-def best_fit(jobs, blocks):
-	print("Best Fit Placement")
-	print("------------------------------------")
-	accumulated_time = 0
-	job_completed_count = 0
-	least_space_wasted_index = 0
-	unused_partitions = []
-	while (True):
-		for block in blocks:
-			print(str(block.num))
-			if (block.assigned_job is None):
-				# traverse job list and and check for best fitting block
-				print("None")
-				for job in jobs:
-					if (job.job_size <= block.size):
-						unused_partition = block.size - job.job_size
-						unused_partitions.append(unused_partition)
-
-			else:
-				print("something")
-
-				
-
-	print("\nJobs are processed in " + str(accumulated_time) + " ms.")
-	print("Jobs completed: " + str(job_completed_count))
-	print("Jobs that are not partitioned:")
-	for job in jobs:
-		print("Job " + str(job.job_stream_num))
-	# print("Throughput: " + str(job_completed_count / float(accumulated_time)) + " ms.")
+	print("Average percentage of partition used: ")
+	print(np.mean(used))
 	print("------------------------------------")
 
 def blocks_are_free(blocks):

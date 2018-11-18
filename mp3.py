@@ -1,3 +1,4 @@
+from __future__ import division
 from copy import deepcopy
 import numpy as np
 
@@ -41,7 +42,7 @@ def first_fit(jobs, blocks):
 	accumulated_time = 0
 	job_completed_count = 0
 	max_length = 0
-	used = []
+	unused = []
 	while (True):
 		for block in blocks:
 			if (block.assigned_job is None):
@@ -49,7 +50,7 @@ def first_fit(jobs, blocks):
 				for job in jobs:
 					if (job.job_size <= block.size):
 						block.assigned_job = job
-						used.append(((block.size - job.job_size) / block.size) * 100)
+						unused.append(((block.size - job.job_size) / block.size) * 100)
 						print ("Job " + str(job.job_stream_num) + " is allocated in Partition #" + str(block.num))
 						jobs.remove(job)
 						job_completed_count += 1
@@ -61,7 +62,7 @@ def first_fit(jobs, blocks):
 					for job in jobs:
 						if (job.job_size <= block.size):
 							block.assigned_job = job
-							used.append(((block.size - job.job_size) / block.size) * 100)
+							unused.append(((block.size - job.job_size) / block.size) * 100)
 							print ("Job " + str(job.job_stream_num) + " is allocated in Partition #" + str(block.num))
 							jobs.remove(job)
 							job_completed_count += 1
@@ -103,10 +104,11 @@ def first_fit(jobs, blocks):
 	print("Jobs that are not partitioned:")
 	for job in jobs:
 		print("Job " + str(job.job_stream_num))
-	print("Throughput: " + str(job_completed_count / float(accumulated_time)) + " ms.")
+	print("Throughput: " + str(job_completed_count / float(accumulated_time)) + " jobs per ms.")
 	print("Max Waiting Queue Length: " + str(max_length))
-	print("Average percentage of partition used: ")
-	print(np.mean(used))
+	print("Average percentage of partition unused: ")
+	print(unused)
+	print(sum(unused) / float(len(unused)))
 	print("------------------------------------")
 
 def blocks_are_free(blocks):
